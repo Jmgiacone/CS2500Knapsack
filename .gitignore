@@ -31,3 +31,8 @@
 *.pro
 *.pro.user
 *.pri
+
+#CLion
+*.idea
+.idea/*
+*.txt
