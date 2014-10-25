@@ -11,7 +11,7 @@ struct Item
 
 std::ostream& operator << (std::ostream& out, Item i)
 {
-  out << "[" << i.name << ": Value " << i.value << ", Weight " << i.weight << ", Ratio " << i.ratio << "]";
+  out << "[" << i.name << ": Value $" << i.value << ", Weight " << i.weight << "lb, Ratio " << i.ratio << " $/lb]";
   return out;
 }
 #endif // ITEM_H
