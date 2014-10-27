@@ -10,8 +10,9 @@ int bruteForceKnapsack(Item* items, int n, int w);
 int main()
 {
     int n, w, temp;
-    float mean, variance;
-
+    float mean, variance, duration;
+    clock_t start, end;
+    start = clock();
     cout << "What is the capacity of the knapsack? ";
     cin >> w;
     cout << "How many elements in the array? ";
@@ -47,7 +48,10 @@ int main()
         j+= 2;
     }
 
-    cout << "The answer via the dynamic method is: " << dynamicKnapsack(wares, n, w);
+    cout << "The answer via the dynamic method is: " << dynamicKnapsack(wares, n, w) << endl;
+    end = clock();
+    duration = (end - start) / static_cast<float>(CLOCKS_PER_SEC);
+    cout << "This operation took " << duration << "ms" << endl;
     return 0;
 }
 
