@@ -6,7 +6,9 @@ using namespace std;
 int main()
 {
     int n;
-    float mean, stdev, temp;
+    float mean, stdev, temp, duration;
+    clock_t start, end;
+    start = clock();
     cout << "How many elements in the array? ";
     cin >> n;
     cout << "What should the mean of the values be? ";
@@ -19,7 +21,7 @@ int main()
     normal_distribution<float> rng(mean, stdev);
     default_random_engine randEngine(time(NULL));
 
-    for(int i = 0; i < 2*n; i++)
+    for(int i = 0; i < 2 * n; i++)
     {
         do
         {
@@ -37,13 +39,15 @@ int main()
         wares[i].value = values[j];
         wares[i].weight = values[j + 1];
         wares[i].ratio = wares[i].value / wares[i].weight;
-        j+= 2;
+        j += 2;
     }
 
     for(int i = 0; i < n; i++)
     {
         cout << wares[i] << endl;
     }
-    
+    end = clock();
+    duration = (end - start) / static_cast<float>(CLOCKS_PER_SEC);
+    cout << duration << endl;
     return 0;
 }
