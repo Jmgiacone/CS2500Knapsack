@@ -4,7 +4,6 @@
 #include <iostream>
 struct Item
 {
-  std::string name = "";
   int weight = 0, value = 0;
   float ratio = -1;
 
