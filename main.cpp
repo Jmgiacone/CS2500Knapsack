@@ -101,7 +101,7 @@ int dynamicKnapsack(const Item* items, const int n, const int w)
             }
             else
             {
-                table[i][j] = table[i][j-1];
+                table[i][j] = table[i-1][j];
             }
         }
     }
