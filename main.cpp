@@ -55,14 +55,10 @@ int main()
         }
 
         start = clock();
-        for(int i = 0; i < n; i++)
-        {
-            cout << wares[i] << endl;
-        }
         cout << "The answer via the dynamic method is: " << dynamicKnapsack(wares, n, w) << endl;
         end = clock();
         duration = (end - start) / static_cast<float>(CLOCKS_PER_SEC);
-        cout << "This operation took " << duration << "ms" << endl;
+        cout << "This operation took " << duration << "sec" << endl;
         totalDuration += duration;
 
         delete [] wares;
@@ -72,7 +68,7 @@ int main()
         values = NULL;
     }
 
-    cout << "The average execution time is: " << (duration / numRepetitions) << "ms" << endl;
+    cout << "The total execution time is: " << totalDuration << "sec and the average execution time is: " << (totalDuration / numRepetitions) << "sec" << endl;
     return 0;
 }
 
@@ -113,6 +109,7 @@ int dynamicKnapsack(const Item* items, const int n, const int w)
         delete [] table[i];
     }
     delete [] table;
+    table = NULL;
 
     return answer;
 }
