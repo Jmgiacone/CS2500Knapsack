@@ -3,7 +3,9 @@
 #include "Item.h"
 using namespace std;
 
-int greedyKnapsack(Item* items, int n, int w);
+int greedyKnapsack(Item* items, const int n, const int w);
+int quickSort(Item* items, const int start, const int end);
+int partition(Item* items, const int start, const int end);
 int dynamicKnapsack(const Item* items, const int n, const int w);
 int bruteForceKnapsack(Item* items, int n, int w);
 
@@ -56,6 +58,7 @@ int main()
 
         start = clock();
         cout << "The answer via the dynamic method is: " << dynamicKnapsack(wares, n, w) << endl;
+        cout << "The answer via the greedy method is: " << greedyKnapsack(wares, n, w) << endl;
         end = clock();
         duration = (end - start) / static_cast<float>(CLOCKS_PER_SEC);
         cout << "This operation took " << duration << "sec" << endl;
@@ -70,6 +73,58 @@ int main()
 
     cout << "The total execution time is: " << totalDuration << "sec and the average execution time is: " << (totalDuration / numRepetitions) << "sec" << endl;
     return 0;
+}
+
+int partition(Item* items, int start, int end)
+{
+    int pivot, i = start - 1;
+    Item pivotItem = items[end], temp;
+
+    for(int j = start; j < end; j++)
+    {
+        if(items[j].ratio >= pivotItem.ratio)
+        {
+            i++;
+            temp = items[j];
+            items[j] = items[i];
+            items[i] = temp;
+        }
+    }
+    pivot = i + 1;
+
+    temp = items[end];
+    items[end] = items[pivot];
+    items[pivot] = temp;
+
+    return pivot;
+}
+
+int quickSort(Item* items, const int start, const int end)
+{
+    int p;
+    if(start < end)
+    {
+        p = partition(items, start, end);
+        quickSort(items, start, p - 1);
+        quickSort(items, p + 1, end);
+    }
+}
+
+int greedyKnapsack(Item* items, const int n, const int w)
+{
+    int weight = 0, value = 0;
+    quickSort(items, 0, n - 1);
+
+    for(int i = 0; i < n; i++)
+    {
+       if(weight + items[i].weight <= w)
+       {
+           weight += items[i].weight;
+           value += items[i].value;
+       }
+    }
+
+    return value;
 }
 
 int dynamicKnapsack(const Item* items, const int n, const int w)
