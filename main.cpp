@@ -3,6 +3,7 @@
 #include "Item.h"
 using namespace std;
 
+const int MS_PER_SEC = 1000;
 int greedyKnapsack(Item* items, const int n, const int w);
 int quickSort(Item* items, const int start, const int end);
 int partition(Item* items, const int start, const int end);
@@ -11,8 +12,8 @@ int bruteForceKnapsack(Item* items, int n, int w);
 
 int main()
 {
-    int n, w, temp, numRepetitions;
-    float mean, variance, duration, totalDuration = 0;
+    int n, w, temp, numRepetitions, greedySolution, dynamicSolution, bruteSolution;
+    float mean, variance, greedyDuration, greedyTotalDuration, dynamicDuration = 0, dynamicTotalDuration, bruteDuration, bruteTotalDuration = 0;
     clock_t start, end;
     Item* wares = NULL;
     int* values = NULL;
@@ -57,12 +58,25 @@ int main()
         }
 
         start = clock();
-        cout << "The answer via the dynamic method is: " << dynamicKnapsack(wares, n, w) << endl;
-        cout << "The answer via the greedy method is: " << greedyKnapsack(wares, n, w) << endl;
+        greedySolution = greedyKnapsack(wares, n, w);
         end = clock();
-        duration = (end - start) / static_cast<float>(CLOCKS_PER_SEC);
-        cout << "This operation took " << duration << "sec" << endl;
-        totalDuration += duration;
+        greedyDuration = MS_PER_SEC * ((end - start) / static_cast<float>(CLOCKS_PER_SEC));
+        start = clock();
+        dynamicSolution = dynamicKnapsack(wares, n, w);
+        end = clock();
+        dynamicDuration = MS_PER_SEC * ((end - start) / static_cast<float>(CLOCKS_PER_SEC));
+        start = clock();
+        bruteSolution = bruteForceKnapsack(wares, n, w);
+        end = clock();
+        bruteDuration = MS_PER_SEC * ((end - start) / static_cast<float>(CLOCKS_PER_SEC));
+
+        cout << "The Greedy Method calculated an answer of " << greedySolution << " in " << greedyDuration << " ms." << endl;
+        cout << "The Dynamic Method calculated an answer of " << dynamicSolution << " in " << dynamicDuration << " ms." << endl;
+        cout << "The Brute-Force Method calculated an answer of " << bruteSolution << " in " << bruteDuration << " ms." << endl;
+
+        greedyTotalDuration += greedyDuration;
+        dynamicTotalDuration += dynamicDuration;
+        bruteTotalDuration += bruteDuration;
 
         delete [] wares;
         delete [] values;
@@ -71,10 +85,19 @@ int main()
         values = NULL;
     }
 
-    cout << "The total execution time is: " << totalDuration << "sec and the average execution time is: " << (totalDuration / numRepetitions) << "sec" << endl;
+    cout << "The Greedy method had an average execution time of " << (greedyTotalDuration / numRepetitions) << " ms." << endl;
+    cout << "The Dynamic method had an average execution time of " << (dynamicTotalDuration / numRepetitions) << " ms." << endl;
+    cout << "The Brute-Force method had an average execution time of " << (bruteTotalDuration / numRepetitions) << " ms." << endl;
+    cout << "The total execution time is "
+            << (greedyTotalDuration + dynamicTotalDuration + bruteTotalDuration)
+            << " ms." << endl;
     return 0;
 }
 
+int bruteForceKnapsack(Item* items, const int n, const int w)
+{
+    return 0;
+}
 int partition(Item* items, int start, int end)
 {
     int pivot, i = start - 1;
