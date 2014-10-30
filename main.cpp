@@ -9,6 +9,7 @@ int quickSort(Item* items, const int start, const int end);
 int partition(Item* items, const int start, const int end);
 int dynamicKnapsack(const Item* items, const int n, const int w);
 int bruteForceKnapsack(Item* items, int n, int w);
+vector<vector<Item>> getcombos(Item* arr,int n, vector<Item> s, int whit);
 
 int main()
 {
@@ -53,6 +54,7 @@ int main()
         {
             wares[i].value = values[j];
             wares[i].weight = values[j + 1];
+            wares[i].id = j;
             wares[i].ratio = wares[i].value / static_cast<float>(wares[i].weight);
             j += 2;
         }
@@ -96,7 +98,112 @@ int main()
 
 int bruteForceKnapsack(Item* items, const int n, const int w)
 {
-    return 0;
+    int currentweight = 0;
+	int currenthighvalue = 0;
+	int currenthighvalueplace = 0;
+    int whit = 0;
+
+    vector<vector<Item>> solution;
+
+    for(int i = 0; i < n; i++)
+    {
+        vector<Item> startlist;
+        startlist.push_back(items[i]);
+        vector<vector<Item>> subsolution = getcombos(items,n,startlist, whit);
+        solution.insert(solution.end(),subsolution.begin(),subsolution.end());
+
+        cout << "\n\nWidth Hit\n++++++++++++++++++++++++++++++\n";
+        for(int z = 0; z < 20 ; z++){cout << "++++++++++++++++++++++++++++++\n";}
+        cout << "\n\n";
+        whit++;
+        //system("pause");
+    }
+
+    int* value = new int[solution.size()];
+
+    for(int j = 0; j < solution.size(); j++)
+	{
+        value[j] = 0;
+	}
+
+
+	for(int j = 0; j < solution.size(); j++)
+	{
+	    for(int i = 0; i < solution[j].size(); i++)
+	    {
+            if(solution[j][i].weight <= w - currentweight)
+            {
+                value[j] += solution[j][i].value; //If it does, add value
+                currentweight += solution[j][i].weight; // if it does add weight
+            }
+            else
+            {
+                solution[j].erase(solution[j].begin()+i); // If it doesn’t fit, remove it.
+                i--;
+            }
+	    }
+
+		//If the current list’s value is greater than the highest list so far, update the highest list to the current list.
+        if(currenthighvalue < value[j])
+	    {
+  	      currenthighvalue = value[j];
+	      currenthighvalue = j;
+  	    }
+
+		//Reset the weight for the next list
+	    currentweight = 0;
+	}
+
+
+    delete [] value;
+    return currenthighvalue;
+}
+
+
+vector<vector<Item>> getcombos(Item* arr,int n, vector<Item> s, int whit)
+{
+//Creates a new list of lists of items to store all lists possible of the //remaining combinations of the item array and the current list.
+	vector<vector<Item>> subsolution;
+
+	if(n == s.size())
+    {
+        cout << "Depth Hit"<< whit <<"\n";
+        //Adds current list to the set of all possible lists, if it is a final //combination.
+        subsolution.push_back(s);
+    }
+    else
+    {
+        //Continue to add remaining items to the list.
+		for(int i = 0; i < n; i++)
+		{
+			bool test = false;
+
+			for(int j = 0; j < s.size(); j++)
+            {
+                Item x = s.at(j);
+                Item y = arr[i];
+
+                if(x == y)
+                {
+                    test = true;
+                }
+            }
+
+            if(test == false)
+            {
+                //make a new list, add the state of the old list too it, //then add the new item and calls the function on it.
+
+
+                vector<Item> startlist;
+                startlist.insert(startlist.end(),s.begin(),s.end());
+                startlist.push_back(arr[i]);
+                vector<vector<Item>> recsolution = getcombos(arr,n,startlist,whit);
+                subsolution.insert(subsolution.end(),recsolution.begin(),recsolution.end());
+            }
+		}
+    }
+    //This will return all combination of the array and the list after the //recursive call.
+	return subsolution;
 }
 int partition(Item* items, int start, int end)
 {
