@@ -9,7 +9,7 @@ int quickSort(Item* items, const int start, const int end);
 int partition(Item* items, const int start, const int end);
 int dynamicKnapsack(const Item* items, const int n, const int w);
 int bruteForceKnapsack(Item* items, int n, int w);
-vector<vector<Item>> getcombos(Item* arr,int n, vector<Item> s, int w);
+int getcombos(Item* arr,int n, vector<Item> s, int w, int cw, int v, int vh);
 
 int main()
 {
@@ -101,82 +101,22 @@ int bruteForceKnapsack(Item* items, const int n, const int w)
     //In brute force knapsack, lists are implemented as vectors.
     //Declare ints to judge lists( and an create solution, which will be a list of all possible lists.
 
-    int currentweight = 0;
-	int currenthighvalue = 0;
-	int currenthighvalueplace = 0;
+    vector<Item> solution;
+    return getcombos(items,n,solution, w, 0, 0,0);
 
-    vector<vector<Item>> solution;
-
-    for(int i = 0; i < n; i++)
-    {
-        if(items[i].weight <= w)
-        {
-            vector<Item> startlist;
-            startlist.push_back(items[i]);
-            vector<vector<Item>> subsolution = getcombos(items,n,startlist, w);
-            solution.insert(solution.end(),subsolution.begin(),subsolution.end());
-        }
-
-        cout << "bFK in main loop " << i << ".\n";
-    }
-
-    int* value = new int[solution.size()];
-
-    for(int j = 0; j < solution.size(); j++)
-	{
-        value[j] = 0;
-	}
-
-
-	for(int j = 0; j < solution.size(); j++)
-	{
-	    int c = 0;
-	    for(int i = 0; i < solution[j].size(); i++)
-	    {
-            if(solution[j][c].weight <= w - currentweight)
-            {
-                value[j] += solution[j][c].value; //If it does, add value
-                currentweight += solution[j][c].weight; // if it does add weight
-            }
-            else
-            {
-                cout << "Critical Error!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
-                solution[j].erase(solution[j].begin()+c); // If it doesn’t fit, remove it.
-                c--;
-            }
-            c++;
-	    }
-		//If the current list’s value is greater than the highest list so far, update the highest list to the current list.
-        if(currenthighvalue < value[j])
-	    {
-  	      currenthighvalue = value[j];
-	      currenthighvalueplace = j;
-  	    }
-
-		//Reset the weight for the next list
-	    currentweight = 0;
-	}
-    delete [] value;
-    return currenthighvalue;
 }
 
 
-vector<vector<Item>> getcombos(Item* arr,int n, vector<Item> s, int w)
+int getcombos(Item* arr,int n, vector<Item> s, int w, int cw, int v, int vh)
 {
-//Creates a new list of lists of items to store all lists possible of the //remaining combinations of the item array and the current list.
-	int currentweight = 0;
-
-	for(int i = 0; i < s.size();i++)
-    {
-        currentweight += s[i].weight;
-    }
-
-	vector<vector<Item>> subsolution;
 
 	if(n == s.size())
     {
-        //Adds current list to the set of all possible lists, if it is a final //combination.
-        subsolution.push_back(s);
+        //FINAL CHECK
+        if(v > vh)
+        {
+            vh = v;
+        }
     }
     else
     {
@@ -200,15 +140,17 @@ vector<vector<Item>> getcombos(Item* arr,int n, vector<Item> s, int w)
             if(test1 == false)
             {
                 //make a new list, add the state of the old list too it, //then add the new item and calls the function on it.
-                if(arr[i].weight <= w - currentweight)
+                if(arr[i].weight <= w - cw)
                 {
-
-
+                    cw += arr[i].weight;
+                    v += arr[i].value;
                     vector<Item> startlist;
                     startlist.insert(startlist.end(),s.begin(),s.end());
                     startlist.push_back(arr[i]);
-                    vector<vector<Item>> recsolution = getcombos(arr,n,startlist,w);
-                    subsolution.insert(subsolution.end(),recsolution.begin(),recsolution.end());
+                    vh = getcombos(arr,n,startlist,w,cw,v, vh);
+
+                    cw -= arr[i].weight;
+                    v -= arr[i].value;
 
                     test2 = true;
                 }
@@ -216,12 +158,17 @@ vector<vector<Item>> getcombos(Item* arr,int n, vector<Item> s, int w)
 
             if(test2 == false)
             {
-                subsolution.push_back(s);
+                //FINAL CHECK
+                if(v > vh)
+                {
+                    vh = v;
+                }
             }
 		}
     }
+
     //This will return all combination of the array and the list after the //recursive call.
-	return subsolution;
+	return vh;
 }
 int partition(Item* items, int start, int end)
 {
